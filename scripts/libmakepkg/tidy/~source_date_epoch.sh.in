@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+#   ~source_date_epoch.sh - Set all timestamps to $SOURCE_DATE_EPOCH
+#
+#   Copyright (C) 2013-2017 Luke Shumaker <lukeshu@parabola.nu>
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# This filename starts with a '~' because it sorts after every other
+# (printable) ASCII character, and we want this to run last.
+
+[[ -n "$LIBMAKEPKG_TIDY_SOURCE_DATE_EPOCH_SH" ]] && return
+LIBMAKEPKG_TIDY_SOURCE_DATE_EPOCH_SH=1
+
+tidy_modify+=('tidy_source_date_epoch')
+
+tidy_source_date_epoch() {
+	local date='1990-01-01 0:0:0 +0'
+	if [[ -n "$SOURCE_DATE_EPOCH" ]]; then
+		date="@$SOURCE_DATE_EPOCH"
+	fi
+	find . -exec touch --no-dereference --date="$date" -- {} +
+}
